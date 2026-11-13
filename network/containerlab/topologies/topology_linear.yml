@@ -1,0 +1,36 @@
+# Containerlab Linear 3-Router FRR Topology (Milestone 3 / Milestone 5 Baseline)
+name: cnt-frr-lab
+
+topology:
+  nodes:
+    r1:
+      kind: linux
+      image: quay.io/frrouting/frr:10.2.1
+      binds:
+        - ../configs/r1/daemons:/etc/frr/daemons
+        - ../configs/r1/frr.conf:/etc/frr/frr.conf
+      labels:
+        asn: 65001
+
+    r2:
+      kind: linux
+      image: quay.io/frrouting/frr:10.2.1
+      binds:
+        - ../configs/r2/daemons:/etc/frr/daemons
+        - ../configs/r2/frr.conf:/etc/frr/frr.conf
+      labels:
+        asn: 65002
+
+    r3:
+      kind: linux
+      image: quay.io/frrouting/frr:10.2.1
+      binds:
+        - ../configs/r3/daemons:/etc/frr/daemons
+        - ../configs/r3/frr.conf:/etc/frr/frr.conf
+      labels:
+        asn: 65003
+
+  links:
+    - endpoints: ["r1:eth1", "r2:eth1"]
+    - endpoints: ["r2:eth2", "r3:eth1"]
+

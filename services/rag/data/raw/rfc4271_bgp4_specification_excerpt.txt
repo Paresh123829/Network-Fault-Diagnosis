@@ -1,0 +1,36 @@
+Internet Engineering Task Force (IETF)
+Request for Comments: 4271
+Category: Standards Track
+Title: A Border Gateway Protocol 4 (BGP-4)
+Publication Date: January 2006
+License: IETF Trust Open Standards
+
+Section 6: BGP Error Handling and Notification Messages
+
+6.7. Cease NOTIFICATION Message
+
+In the absence of any fatal error (that is, if a peer wants to close the BGP connection), a BGP speaker MAY send a NOTIFICATION message with the Error Code Cease. The Cease NOTIFICATION message MAY contain one of the following subcodes:
+
+1 - Maximum Number of Prefixes Reached
+2 - Administrative Shutdown
+3 - Peer De-configured
+4 - Administrative Reset
+5 - Connection Rejected
+6 - Other Configuration Change
+7 - Connection Collision Resolution
+8 - Out of Resources
+
+Section 8: BGP Finite State Machine (FSM)
+
+The BGP Finite State Machine controls the establishment, maintenance, and teardown of peering connections between BGP speakers. The six states are Idle, Connect, Active, OpenSent, OpenConfirm, and Established.
+
+Event 25: HoldTimer_Expires
+If the HoldTimer expires before receiving a KEEPALIVE or UPDATE message, the local speaker MUST:
+- Send a NOTIFICATION message with Error Code Hold Timer Expired.
+- Release all BGP resources associated with the peer.
+- Drop all routes learned from the peer.
+- Change its state to Idle.
+
+Event 26: KeepaliveTimer_Expires
+When the Keepalive timer expires, the local BGP speaker MUST transmit a KEEPALIVE message to the peer to prevent hold timer expiration.
+

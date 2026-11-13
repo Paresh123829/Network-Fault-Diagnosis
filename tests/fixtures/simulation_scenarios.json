@@ -1,0 +1,97 @@
+[
+  {
+    "scenario_id": "BGP_FAILURE_R1_R2",
+    "fault_name": "BGP Session Clear",
+    "target": "R1",
+    "injection_mechanism": "clear_bgp_session",
+    "injection_params": {
+      "peer_ip": "172.16.12.2"
+    },
+    "expected_symptoms": [
+      "BGP neighbor 172.16.12.2 transitions to Idle/Active state",
+      "Routes learned from peer are withdrawn from RIB",
+      "Syslog: %ROUTING-BGP-5-ADJCHANGE neighbor 172.16.12.2 Down",
+      "Syslog: %ROUTING-BGP-5-ADJCHANGE neighbor 172.16.12.2 Up (after reconvergence)"
+    ],
+    "recovery_mechanism": "automatic_bgp_reconvergence_after_30s",
+    "expected_recovered_state": "BGP session to 172.16.12.2 re-established, routes re-learned",
+    "topology_link_affected": "R1-R2",
+    "protocol": "bgp"
+  },
+  {
+    "scenario_id": "BGP_FAILURE_R2_R3",
+    "fault_name": "BGP Session Clear",
+    "target": "R2",
+    "injection_mechanism": "clear_bgp_session",
+    "injection_params": {
+      "peer_ip": "172.16.23.2"
+    },
+    "expected_symptoms": [
+      "BGP neighbor 172.16.23.2 transitions to Idle/Active state",
+      "Routes learned from peer are withdrawn from RIB",
+      "Syslog: %ROUTING-BGP-5-ADJCHANGE neighbor 172.16.23.2 Down",
+      "Syslog: %ROUTING-BGP-5-ADJCHANGE neighbor 172.16.23.2 Up (after reconvergence)"
+    ],
+    "recovery_mechanism": "automatic_bgp_reconvergence_after_30s",
+    "expected_recovered_state": "BGP session to 172.16.23.2 re-established, routes re-learned",
+    "topology_link_affected": "R2-R3",
+    "protocol": "bgp"
+  },
+  {
+    "scenario_id": "BGP_FULL_CLEAR_R2",
+    "fault_name": "BGP Full Session Clear (All Peers)",
+    "target": "R2",
+    "injection_mechanism": "clear_bgp_all",
+    "injection_params": {},
+    "expected_symptoms": [
+      "All BGP neighbors on R2 transition to Idle/Active state",
+      "All BGP-learned routes withdrawn from RIB on R2",
+      "Syslog: Multiple %ROUTING-BGP-5-ADJCHANGE Down entries",
+      "Syslog: Multiple %ROUTING-BGP-5-ADJCHANGE Up entries after reconvergence"
+    ],
+    "recovery_mechanism": "automatic_bgp_reconvergence_after_30s",
+    "expected_recovered_state": "All BGP sessions on R2 re-established",
+    "topology_link_affected": "R1-R2 and R2-R3",
+    "protocol": "bgp"
+  },
+  {
+    "scenario_id": "PORT_ADMIN_SHUTDOWN_R2_ETH1",
+    "fault_name": "Interface Admin Shutdown (eth1)",
+    "target": "R2",
+    "injection_mechanism": "interface_shutdown",
+    "injection_params": {
+      "ifname": "eth1"
+    },
+    "expected_symptoms": [
+      "Interface eth1 on R2 transitions to admin-down state",
+      "OSPF neighbor adjacency lost on R1-R2 link",
+      "BGP session R1-R2 goes Down (Interface flap reason)",
+      "Syslog: %PKT_INFRA-LINK-3-UPDOWN changed state to Down",
+      "Syslog: %ROUTING-BGP-5-ADJCHANGE neighbor Down - Interface flap"
+    ],
+    "recovery_mechanism": "interface_no_shutdown",
+    "expected_recovered_state": "eth1 back to Up, OSPF re-neighbors with R1, BGP re-establishes",
+    "topology_link_affected": "R1-R2",
+    "protocol": "interface"
+  },
+  {
+    "scenario_id": "PORT_ADMIN_SHUTDOWN_R2_ETH2",
+    "fault_name": "Interface Admin Shutdown (eth2)",
+    "target": "R2",
+    "injection_mechanism": "interface_shutdown",
+    "injection_params": {
+      "ifname": "eth2"
+    },
+    "expected_symptoms": [
+      "Interface eth2 on R2 transitions to admin-down state",
+      "OSPF neighbor adjacency lost on R2-R3 link",
+      "BGP session R2-R3 goes Down (Interface flap reason)",
+      "Syslog: %PKT_INFRA-LINK-3-UPDOWN changed state to Down",
+      "Syslog: %ROUTING-BGP-5-ADJCHANGE neighbor Down - Interface flap"
+    ],
+    "recovery_mechanism": "interface_no_shutdown",
+    "expected_recovered_state": "eth2 back to Up, OSPF re-neighbors with R3, BGP re-establishes",
+    "topology_link_affected": "R2-R3",
+    "protocol": "interface"
+  }
+]

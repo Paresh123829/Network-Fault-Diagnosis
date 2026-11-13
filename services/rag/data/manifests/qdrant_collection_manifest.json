@@ -1,0 +1,7 @@
+{
+  "collection_name": "network_knowledge_base",
+  "points_count": 44,
+  "indexed_vectors_count": 0,
+  "status": "green",
+  "vectors_config": "size=384 distance=<Distance.COSINE: 'Cosine'> hnsw_config=None quantization_config=None on_disk=None memory=None datatype=None multivector_config=None"
+}

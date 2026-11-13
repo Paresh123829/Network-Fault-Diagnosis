@@ -1,0 +1,32 @@
+{
+  "manifest_timestamp": "2026-11-04T17:04:16Z",
+  "ingestion_duration_seconds": 3.51,
+  "embedding_model": "BAAI/bge-small-en-v1.5",
+  "embedding_dimension": 384,
+  "collection_name": "network_knowledge_base",
+  "total_documents": 11,
+  "total_failures": 0,
+  "total_chunks": 44,
+  "protocols_covered": [
+    "fib",
+    "general",
+    "bgp",
+    "vlan",
+    "telemetry",
+    "ospf",
+    "physical_interface",
+    "optics",
+    "bfd"
+  ],
+  "fault_categories_covered": [
+    "TRANSCEIVER_FAULT",
+    "general",
+    "FIB_DROP",
+    "BFD_SESSION_FAILURE",
+    "BGP_NEIGHBOR_DOWN",
+    "PHYSICAL_LINK_DOWN",
+    "PORT_ADMIN_SHUTDOWN",
+    "VLAN_MISMATCH",
+    "OSPF_ADJACENCY_FAILURE"
+  ]
+}

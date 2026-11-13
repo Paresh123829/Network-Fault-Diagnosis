@@ -1,0 +1,43 @@
+# Python AI Service — Dependencies
+# Install with: pip install -r requirements.txt
+#
+# Pinned versions are intentionally NOT used here for a 6-week prototype.
+# Pin versions before any production deployment.
+
+# ── Web framework ─────────────────────────────────────────────────────────────
+fastapi>=0.111.0
+uvicorn[standard]>=0.29.0
+
+# ── Configuration ─────────────────────────────────────────────────────────────
+pydantic>=2.7.0
+pydantic-settings>=2.3.0
+python-dotenv>=1.0.0
+
+# ── LangGraph / LangChain (agent orchestration) ───────────────────────────────
+langgraph>=0.2.0
+langchain-core>=0.3.0
+networkx>=3.0
+# Added in Phase 6 when external LLM providers are configured
+# langchain>=0.2.0
+# langchain-openai>=0.1.0
+# langchain-google-genai>=1.0.0
+# langchain-anthropic>=0.1.0
+
+# ── RAG / Qdrant ──────────────────────────────────────────────────────────────
+qdrant-client>=1.9.0
+fastembed>=0.3.0
+beautifulsoup4>=4.12.0
+pypdf>=4.0.0
+python-docx>=1.1.0
+
+# ── MongoDB ───────────────────────────────────────────────────────────────────
+# Added in Phase 10 (shared with Node.js service)
+# motor>=3.4.0
+
+# ── Logging / Utilities ───────────────────────────────────────────────────────
+python-json-logger>=2.0.0
+
+# ── Testing ───────────────────────────────────────────────────────────────────
+pytest>=8.2.0
+pytest-asyncio>=0.23.0
+httpx>=0.27.0         # async test client for FastAPI

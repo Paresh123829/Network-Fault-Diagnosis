@@ -1,0 +1,115 @@
+[
+  {
+    "query_id": "eval_q01",
+    "query_text": "BGP neighbor down peer closed the session hold timer expired",
+    "expected_protocol": "bgp",
+    "expected_fault_category": "BGP_NEIGHBOR_DOWN",
+    "relevant_doc_names": ["bgp_neighbor_troubleshooting_sop.md", "rfc4271_bgp4_specification_excerpt.txt"],
+    "expected_keywords": ["bgp", "neighbor", "hold timer", "established"]
+  },
+  {
+    "query_id": "eval_q02",
+    "query_text": "manual clear ip bgp session reset route withdrawal spike",
+    "expected_protocol": "bgp",
+    "expected_fault_category": "BGP_NEIGHBOR_DOWN",
+    "relevant_doc_names": ["bgp_neighbor_troubleshooting_sop.md", "rfc4271_bgp4_specification_excerpt.txt"],
+    "expected_keywords": ["cease", "administrative reset", "clear bgp"]
+  },
+  {
+    "query_id": "eval_q03",
+    "query_text": "physical link failure carrier transition line protocol down",
+    "expected_protocol": "physical_interface",
+    "expected_fault_category": "PHYSICAL_LINK_DOWN",
+    "relevant_doc_names": ["interface_and_transceiver_diagnostics.md", "cisco_iosxr_interface_troubleshooting_guide.html"],
+    "expected_keywords": ["carrier", "line protocol", "updown"]
+  },
+  {
+    "query_id": "eval_q04",
+    "query_text": "interface flapping intermittent link state oscillation",
+    "expected_protocol": "physical_interface",
+    "expected_fault_category": "PHYSICAL_LINK_DOWN",
+    "relevant_doc_names": ["interface_and_transceiver_diagnostics.md", "cisco_iosxr_interface_troubleshooting_guide.html"],
+    "expected_keywords": ["carrier transition", "flapping"]
+  },
+  {
+    "query_id": "eval_q05",
+    "query_text": "interface changed state to administratively down shutdown command",
+    "expected_protocol": "physical_interface",
+    "expected_fault_category": "PORT_ADMIN_SHUTDOWN",
+    "relevant_doc_names": ["cisco_iosxr_interface_troubleshooting_guide.html", "interface_and_transceiver_diagnostics.md"],
+    "expected_keywords": ["administratively down", "shutdown", "no shutdown"]
+  },
+  {
+    "query_id": "eval_q06",
+    "query_text": "optical receive power low warning rx power attenuation dBm",
+    "expected_protocol": "optics",
+    "expected_fault_category": "TRANSCEIVER_FAULT",
+    "relevant_doc_names": ["interface_and_transceiver_diagnostics.md", "optical_transceiver_optics_sop.pdf"],
+    "expected_keywords": ["rx power", "dbm", "transceiver"]
+  },
+  {
+    "query_id": "eval_q07",
+    "query_text": "transceiver physical removal optical module uninstalled pulled QSFP",
+    "expected_protocol": "optics",
+    "expected_fault_category": "TRANSCEIVER_FAULT",
+    "relevant_doc_names": ["interface_and_transceiver_diagnostics.md", "optical_transceiver_optics_sop.pdf"],
+    "expected_keywords": ["transceiver", "uninstalled", "pulled", "qsfp"]
+  },
+  {
+    "query_id": "eval_q08",
+    "query_text": "BFD session down keepalive timeout sub-second convergence failure",
+    "expected_protocol": "bfd",
+    "expected_fault_category": "BFD_SESSION_FAILURE",
+    "relevant_doc_names": ["bfd_protocol_and_fault_recovery.md"],
+    "expected_keywords": ["bfd", "fast-detect", "multiplier"]
+  },
+  {
+    "query_id": "eval_q09",
+    "query_text": "ECMP path imbalance hash polarization spine leaf load distribution",
+    "expected_protocol": "fib",
+    "expected_fault_category": "FIB_DROP",
+    "relevant_doc_names": ["ecmp_forwarding_and_fib_blackhole_analysis.md"],
+    "expected_keywords": ["ecmp", "hash", "5-tuple"]
+  },
+  {
+    "query_id": "eval_q10",
+    "query_text": "FIB packet drops hardware discard blackhole incomplete adjacency",
+    "expected_protocol": "fib",
+    "expected_fault_category": "FIB_DROP",
+    "relevant_doc_names": ["ecmp_forwarding_and_fib_blackhole_analysis.md", "cisco_iosxr_mdt_telemetry_handbook.md"],
+    "expected_keywords": ["packet-drops", "incomplete-adjacency", "forwarding drops"]
+  },
+  {
+    "query_id": "eval_q11",
+    "query_text": "forwarding loop TTL expired in transit routing blackhole",
+    "expected_protocol": "fib",
+    "expected_fault_category": "FIB_DROP",
+    "relevant_doc_names": ["ecmp_forwarding_and_fib_blackhole_analysis.md"],
+    "expected_keywords": ["routing loop", "ttl expiration", "forwarding"]
+  },
+  {
+    "query_id": "eval_q12",
+    "query_text": "OSPF adjacency deadlock stuck in ExStart interface MTU mismatch",
+    "expected_protocol": "ospf",
+    "expected_fault_category": "OSPF_ADJACENCY_FAILURE",
+    "relevant_doc_names": ["ospf_adjacency_and_mtu_troubleshooting.md"],
+    "expected_keywords": ["exstart", "mtu mismatch", "dbd"]
+  },
+  {
+    "query_id": "eval_q13",
+    "query_text": "VLAN trunk native VLAN mismatch untagged frame drop 802.1Q",
+    "expected_protocol": "vlan",
+    "expected_fault_category": "VLAN_MISMATCH",
+    "relevant_doc_names": ["vlan_trunking_and_layer2_isolation.json"],
+    "expected_keywords": ["native vlan", "802.1q", "trunk"]
+  },
+  {
+    "query_id": "eval_q14",
+    "query_text": "Cisco IOS-XR model-driven telemetry YANG sensor path nanosecond timestamp",
+    "expected_protocol": "telemetry",
+    "expected_fault_category": "GENERAL_TELEMETRY",
+    "relevant_doc_names": ["cisco_iosxr_mdt_telemetry_handbook.md"],
+    "expected_keywords": ["yang", "mdt", "sensor path", "nanosecond"]
+  }
+]
+

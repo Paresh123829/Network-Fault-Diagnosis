@@ -1,0 +1,35 @@
+{
+  "title": "Layer 2 VLAN Trunking, 802.1Q Tagging, and Bridge Isolation Troubleshooting",
+  "document_id": "SOP-NET-L2-006",
+  "publisher": "Data Center Layer 2 Operations",
+  "protocol": "vlan",
+  "vendor": "Cisco / Linux Bridge",
+  "platform": "Cisco IOS-XR / Linux",
+  "fault_category": "VLAN_MISMATCH",
+  "document_type": "troubleshooting_sop",
+  "publication_date": "2024-02-15",
+  "source_license": "Informational",
+  "sections": [
+    {
+      "title": "802.1Q Encapsulation and Trunking Fundamentals",
+      "level": 1,
+      "content": "IEEE 802.1Q tags Ethernet frames with a 4-byte header inserting a 12-bit VLAN Identifier (VID), supporting up to 4094 distinct broadcast domains. Trunk ports carry multiplexed traffic from multiple VLANs, while Access ports transmit only untagged frames belonging to a single PVID (Port VLAN ID)."
+    },
+    {
+      "title": "Native VLAN Mismatch and Untagged Drop Anomalies",
+      "level": 2,
+      "content": "A Native VLAN Mismatch occurs when two connected trunk ports are configured with different native VLAN IDs. Untagged frames transmitted from Native VLAN X on Switch 1 arrive on Switch 2 and are incorrectly ingested into Native VLAN Y, causing broadcast leakage and ARP isolation across subnets. Cisco switches detect this via CDP/LLDP and log: %SPANTREE-2-RECV_PVID_ERR."
+    },
+    {
+      "title": "Linux Bridge and Containerlab Subinterface Behavior",
+      "level": 2,
+      "content": "In Containerlab and Linux network emulation environments, 802.1Q VLAN subinterfaces (e.g. eth1.100, eth1.200) attach to kernel bridges (br0). If VLAN filtering is enabled without 'bridge vlan add dev eth1 vid 100', incoming tagged frames are dropped silently in kernel netfilter without generating ICMP error replies. Verify using: 'bridge vlan show' and 'tcpdump -i eth1 -nn -e vlan'."
+    },
+    {
+      "title": "Layer 2 Troubleshooting Checklist",
+      "level": 2,
+      "content": "1. Verify trunk allowed VLAN list on both ends of the inter-switch link.\n2. Confirm Native VLAN parity across link endpoints.\n3. Check Spanning Tree Protocol (STP) port state with 'show spanning-tree interface'. If port is in Blocking or Inconsistent state, check for BPDU guard or root guard triggers.\n4. Verify ARP resolution across VLAN gateway."
+    }
+  ]
+}
+

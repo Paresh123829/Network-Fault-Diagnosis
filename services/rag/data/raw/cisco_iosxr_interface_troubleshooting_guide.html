@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Cisco IOS-XR Interface and Link Fault Troubleshooting Guide</title>
+</head>
+<body>
+  <h1>Cisco IOS-XR Interface and Physical Link Fault Troubleshooting Guide</h1>
+  <p><strong>Publisher:</strong> Cisco Systems Technical Documentation</p>
+  <p><strong>Platform:</strong> Cisco IOS-XR 6.x / 7.x Spine-Leaf Architecture</p>
+  <p><strong>Document Type:</strong> Configuration and Operations Guide</p>
+
+  <h2>1. Interface State Interpretation</h2>
+  <p>An interface status consists of two parameters: physical link state and line protocol state. The operational state combinations are:</p>
+  <ul>
+    <li><strong>Up / Up:</strong> Fully operational. Forwarding packets normally.</li>
+    <li><strong>Administratively Down / Down:</strong> The interface has been configured with the <code>shutdown</code> command. To restore, configure <code>no shutdown</code>.</li>
+    <li><strong>Down / Down:</strong> Physical layer failure. Check cable, SFP transceiver, remote device power, or fiber patch.</li>
+    <li><strong>Up / Down:</strong> Physical carrier detected but data link layer protocol failed. Typically caused by encapsulation mismatch, clocking issue, or keepalive failure.</li>
+  </ul>
+
+  <h2>2. Diagnosing Administrative Shutdown</h2>
+  <p>When an operator or automated playbook executes an administrative shutdown:</p>
+  <pre>
+RP/0/RP0/CPU0:spine1(config)# interface HundredGigE0/0/0/1
+RP/0/RP0/CPU0:spine1(config-if)# shutdown
+RP/0/RP0/CPU0:spine1(config-if)# commit
+  </pre>
+  <p>The router logs: <code>%LINK-3-UPDOWN: Interface HundredGigE0/0/0/1, changed state to administratively down</code>.</p>
+  <p>This event induces downstream BGP session tears on attached peer leaf routers within the detection window.</p>
+
+  <h2>3. Optical Monitoring and Carrier Transitions</h2>
+  <p>Inspect optical parameters with the command:</p>
+  <pre>show controllers HundredGigE0/0/0/1 phy</pre>
+  <p>Monitor carrier transition counters. A high carrier transition rate indicates link flapping caused by marginal optical power.</p>
+</body>
+</html>
+
