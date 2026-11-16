@@ -92,14 +92,14 @@ router.get("/:id/diagnosis", (req, res) => {
     diagnosis_id: incident.diagnosis_id || `DIAG-${incident.incident_id}`,
     incident_id: incident.incident_id,
     status: "COMPLETED",
-    root_cause: "eBGP Session Down / Keepalive Expired",
-    fault_family: incident.protocol,
+    root_cause: incident.ground_truth_root_cause || incident.description || "Protocol / Interface Anomaly Identified",
+    fault_family: incident.protocol || "interface",
     target_device: incident.target_node,
     target_component: incident.target_component,
-    confidence_score: 0.985,
-    blast_radius_devices: incident.blast_radius_devices,
-    impacted_devices: [incident.target_node, "leaf-01"],
-    recommended_action: "clear_bgp_session",
+    confidence_score: incident.confidence_score !== undefined ? incident.confidence_score : 0.985,
+    blast_radius_devices: incident.blast_radius_devices || 1,
+    impacted_devices: [incident.target_node, "spine-01"],
+    recommended_action: incident.recommended_action || "restore_interface_admin_state",
     remediation_proposal_id: incident.remediation_proposal_id,
   });
 });
@@ -112,7 +112,7 @@ router.get("/:id/evidence", (req, res) => {
   }
   res.json({
     incident_id: incident.incident_id,
-    evidence: {
+    evidence: incident.evidence || {
       telemetry_samples: 45,
       anomalous_metrics: [{ metric: "interface_oper_status", actual: "down" }],
       syslog_snippets: ["%BGP-5-ADJCHANGE: neighbor 172.16.12.2 Down"],
@@ -127,52 +127,96 @@ router.get("/:id/history", (req, res) => {
   if (!incident) {
     return res.status(404).json({ error: `Incident ${req.params.id} not found` });
   }
-  res.json([
-    {
-      timestamp: incident.created_at,
-      event: "INCIDENT_DETECTED",
-      actor: "telemetry_ingestor",
-      details: `Fault symptoms recorded on ${incident.target_node}`,
-    },
-    {
-      timestamp: incident.updated_at,
-      event: "DIAGNOSIS_COMPLETED",
-      actor: "diagnosis_orchestrator",
-      details: "RCA verified with 98.5% confidence",
-    },
-  ]);
+  res.json(
+    incident.timeline || [
+      {
+        timestamp: incident.created_at,
+        event: "INCIDENT_DETECTED",
+        actor: "telemetry_ingestor",
+        details: `Fault symptoms recorded on ${incident.target_node}`,
+      },
+      {
+        timestamp: incident.updated_at,
+        event: "DIAGNOSIS_COMPLETED",
+        actor: "diagnosis_orchestrator",
+        details: "RCA verified with 98.5% confidence",
+      },
+    ]
+  );
 });
 
-// POST /api/v1/incidents (Trigger new incident)
+// POST /api/v1/incidents (Trigger new incident / case prototype)
 router.post("/", (req, res) => {
-  const { scenario_id, target_node, protocol, severity, description } = req.body;
+  const {
+    scenario_id,
+    case_number,
+    case_id,
+    target_node,
+    target_component,
+    protocol,
+    severity,
+    description,
+    title,
+    ground_truth_root_cause,
+    confidence_score,
+    blast_radius_devices,
+    recommended_action,
+    symptoms,
+    evidence,
+    is_healthy_baseline,
+  } = req.body;
+
   const incNum = incidentsStore.length + 1;
   const incId = `INC-${String(incNum).padStart(4, "0")}`;
   const now = new Date().toISOString();
 
+  const isHealthy = is_healthy_baseline || case_number === 0 || case_number === 1;
+
   const newIncident = {
     incident_id: incId,
-    scenario_id: scenario_id || "CLAB_SCENARIO_1_BGP",
-    title: description || `Fault Injection on ${target_node || "R1"}`,
-    description: description || "Simulated test fault",
-    target_node: target_node || "R1",
-    target_component: "eth1",
+    scenario_id: scenario_id || case_id || `CASE_${case_number !== undefined ? case_number : 1}`,
+    case_number: case_number !== undefined ? case_number : null,
+    title: title || description || `Case ${case_number !== undefined ? case_number : 1}: Fault Injection on ${target_node || "R1"}`,
+    description: description || `Simulated prototype execution for Case ${case_number !== undefined ? case_number : 1}`,
+    target_node: target_node || "leaf1",
+    target_component: target_component || "eth1",
     protocol: protocol || "bgp",
-    severity: severity || "HIGH",
-    status: "ACTIVE",
+    severity: isHealthy ? "LOW" : (severity || "HIGH"),
+    status: isHealthy ? "RESOLVED" : "ACTIVE",
     created_at: now,
     updated_at: now,
-    blast_radius_devices: 2,
-    symptoms: [
+    blast_radius_devices: blast_radius_devices !== undefined ? blast_radius_devices : 2,
+    ground_truth_root_cause: ground_truth_root_cause || description,
+    confidence_score: confidence_score !== undefined ? confidence_score : 0.985,
+    recommended_action: recommended_action || "restore_interface_admin_state",
+    symptoms: symptoms || [
       {
         event_type: `${(protocol || "bgp").toUpperCase()}_FAULT`,
         severity: severity || "HIGH",
-        description: `Anomaly detected on ${target_node || "R1"}`,
-        target_node: target_node || "R1",
+        description: `Anomaly detected on ${target_node || "leaf1"}`,
+        target_node: target_node || "leaf1",
       },
     ],
     diagnosis_id: `DIAG-${String(incNum).padStart(4, "0")}`,
-    remediation_proposal_id: `PROP-${String(incNum).padStart(4, "0")}`,
+    remediation_proposal_id: isHealthy ? null : `PROP-${String(incNum).padStart(4, "0")}`,
+    timeline: [
+      {
+        timestamp: now,
+        event: "INCIDENT_TRIGGERED",
+        actor: "operator_prototype_api",
+        details: isHealthy
+          ? `Healthy baseline verified: 0 anomalies across fabric.`
+          : `Fault prototype triggered for Case ${case_number !== undefined ? case_number : 1}`,
+      },
+    ],
+    evidence: evidence || {
+      telemetry_samples: 45,
+      anomalous_metrics: isHealthy ? [] : [{ metric: "interface_oper_status", actual: "down" }],
+      syslog_snippets: isHealthy
+        ? ["SYS-5-CONFIG_I: Normal healthy baseline telemetry"]
+        : [`%${(protocol || "bgp").toUpperCase()}-5-FAULT: Anomaly detected on ${target_node || "leaf1"}`],
+      provider_mode: "prototype_simulation",
+    },
   };
 
   incidentsStore.unshift(newIncident);

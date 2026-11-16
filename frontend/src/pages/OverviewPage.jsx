@@ -1,33 +1,15 @@
 import React, { useState } from "react";
 import { ShieldAlert, Activity, CheckCircle, Clock, Zap, Network, ArrowRight } from "lucide-react";
+import { CaseSimulator } from "../components/CaseSimulator";
 
-export function OverviewPage({ incidents, proposals, systemStatus, onSelectIncident, setActiveTab, onTriggerFault }) {
-  const [isTriggering, setIsTriggering] = useState(false);
-
+export function OverviewPage({ incidents, proposals, systemStatus, onSelectIncident, setActiveTab, onTriggerFault, onTriggerCase }) {
   const activeIncidents = incidents.filter((i) => i.status === "ACTIVE");
   const resolvedIncidents = incidents.filter((i) => i.status === "RESOLVED");
-
-  const handleQuickTrigger = async () => {
-    setIsTriggering(true);
-    try {
-      await onTriggerFault({
-        scenario_id: "CLAB_SCENARIO_1_BGP",
-        target_node: "R1",
-        protocol: "bgp",
-        severity: "HIGH",
-        description: "Automated test fault injection via UI",
-      });
-    } catch (err) {
-      alert("Error triggering fault: " + err.message);
-    } finally {
-      setIsTriggering(false);
-    }
-  };
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
       
-      {/* Top Banner & Quick Trigger */}
+      {/* Top Banner */}
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "1rem" }}>
         <div>
           <h1 style={{ fontSize: "1.6rem", fontWeight: 700, margin: 0, color: "#f8fafc" }}>
@@ -37,29 +19,14 @@ export function OverviewPage({ incidents, proposals, systemStatus, onSelectIncid
             Autonomous Multi-Agent Telemetry Ingestion, RCA, and Safe Remediation Dashboard
           </p>
         </div>
-
-        <button
-          onClick={handleQuickTrigger}
-          disabled={isTriggering}
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "0.5rem",
-            padding: "0.6rem 1.25rem",
-            backgroundColor: "#2563eb",
-            color: "#ffffff",
-            border: "none",
-            borderRadius: "0.375rem",
-            fontWeight: 600,
-            fontSize: "0.85rem",
-            cursor: isTriggering ? "not-allowed" : "pointer",
-            boxShadow: "0 4px 6px -1px rgba(37, 99, 235, 0.2)",
-          }}
-        >
-          <Zap style={{ width: "1rem", height: "1rem" }} />
-          {isTriggering ? "Injecting Fault..." : "Simulate BGP Fault Injection"}
-        </button>
       </div>
+
+      {/* Featured Interactive Case Simulator (Cases 0 to 12) */}
+      <CaseSimulator
+        onTriggerCase={onTriggerCase || onTriggerFault}
+        onSelectIncident={onSelectIncident}
+        setActiveTab={setActiveTab}
+      />
 
       {/* KPI Stats Grid */}
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "1rem" }}>
@@ -196,19 +163,19 @@ export function OverviewPage({ incidents, proposals, systemStatus, onSelectIncid
           <div style={{ backgroundColor: "#0f172a", borderRadius: "0.375rem", padding: "1rem", border: "1px solid #1e293b", display: "flex", flexDirection: "column", gap: "0.75rem" }}>
             <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.85rem" }}>
               <span style={{ color: "#94a3b8" }}>Fabric Architecture:</span>
-              <span style={{ fontWeight: 600, color: "#f8fafc" }}>Spine-Leaf Clos</span>
+              <span style={{ fontWeight: 600, color: "#f8fafc" }}>Spine-Leaf Clos (15 Nodes)</span>
             </div>
             <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.85rem" }}>
-              <span style={{ color: "#94a3b8" }}>Topology Nodes:</span>
-              <span style={{ fontWeight: 600, color: "#f8fafc" }}>5 Devices</span>
+              <span style={{ color: "#94a3b8" }}>Spine Routers:</span>
+              <span style={{ fontWeight: 600, color: "#f8fafc" }}>spine1 — spine4</span>
             </div>
             <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.85rem" }}>
-              <span style={{ color: "#94a3b8" }}>Active Links:</span>
-              <span style={{ fontWeight: 600, color: "#34d399" }}>6 Links (100G)</span>
+              <span style={{ color: "#94a3b8" }}>Leaf Switches:</span>
+              <span style={{ fontWeight: 600, color: "#f8fafc" }}>leaf1 — leaf8</span>
             </div>
             <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.85rem" }}>
               <span style={{ color: "#94a3b8" }}>Routing Protocols:</span>
-              <span style={{ fontWeight: 600, color: "#f8fafc" }}>eBGP + OSPF + BFD</span>
+              <span style={{ fontWeight: 600, color: "#34d399" }}>eBGP + OSPF + BFD</span>
             </div>
           </div>
 
@@ -222,4 +189,3 @@ export function OverviewPage({ incidents, proposals, systemStatus, onSelectIncid
     </div>
   );
 }
-
